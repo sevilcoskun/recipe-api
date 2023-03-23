@@ -94,6 +94,6 @@ public class RecipeServiceTest {
     @Test
     public void fail_search_recipe() {
         List<Recipe> empty = new ArrayList<>();
-        doReturn(empty).when(recipeServiceMock).getRecipeById(anyLong());
+        doReturn(empty).when(recipeServiceMock).search(any());
     }
 }

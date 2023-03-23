@@ -135,7 +135,7 @@ public class RecipeControllerTest {
     @Test
     public void fail_search_recipe() {
         List<Recipe> empty = new ArrayList<>();
-        doReturn(empty).when(recipeServiceMock).getRecipeById(anyLong());
+        doReturn(empty).when(recipeServiceMock).search(any());
 
         RequestBodyDto request = new RequestBodyDto();
 
@@ -143,6 +143,6 @@ public class RecipeControllerTest {
 
         assertThat(response).isNotNull();
         assertEquals(404, response.getStatusCode().value());
-        assertTrue(response.getBody().equals(null));
+        assertEquals(null, response.getBody());
     }
 }

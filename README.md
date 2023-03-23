@@ -1,6 +1,9 @@
 ### Tech Requirements
 Java 17
-Maven 3.x
+Maven 2.x
+Swagger 2
+OpenAPI 3
+H2
 
 ### Objective
 Create a standalone java application which allows users to manage their favourite recipes. It should allow adding, updating, removing and fetching recipes. Additionally users should be able to filter available recipes based on one or more of the following criteria:
@@ -21,9 +24,6 @@ All these requirements needs to be satisfied:
 4. Data must be persisted in a database
 5. Unit tests must be present
 6. Integration tests must be present
-
-
-### Design Solution
 
 
 ### How to Run the applicaiton
