@@ -1,8 +1,6 @@
 package com.recipe.assignment.controller;
 
 import java.util.List;
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.recipe.assignment.model.Recipe;
 import com.recipe.assignment.model.RequestBodyDto;
+import com.recipe.assignment.model.SuccessResponse;
+import com.recipe.assignment.model.ErrorResponse;
+import com.recipe.assignment.model.IResponse;
 import com.recipe.assignment.service.RecipeService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,12 +36,17 @@ public class RecipeController {
 
     @Operation(summary = "Get a recipe by id")
     @GetMapping("/recipes/{id}")
-    public ResponseEntity<Optional<Recipe>> getRecipeById(@PathVariable Long id){
+    public ResponseEntity<IResponse> getRecipeById(@PathVariable Long id){
+       
         if(recipeService.getRecipeById(id).isPresent()) {
-            return ResponseEntity.status(HttpStatus.OK).body(recipeService.getRecipeById(id));
+            SuccessResponse successResponse = new SuccessResponse();
+            successResponse.setRecipe(recipeService.getRecipeById(id));
+            return ResponseEntity.status(HttpStatus.OK).body(successResponse);
         }
         else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            ErrorResponse errorResponse = new ErrorResponse();
+            errorResponse.setErrorMessage("Given [" + id + "] Recipe is not Found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
         }
     }
 

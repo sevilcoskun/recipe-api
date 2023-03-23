@@ -22,6 +22,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.recipe.assignment.model.Recipe;
 import com.recipe.assignment.model.RequestBodyDto;
+import com.recipe.assignment.model.SuccessResponse;
+import com.recipe.assignment.model.ErrorResponse;
+import com.recipe.assignment.model.IResponse;
 import com.recipe.assignment.repository.RecipeRepository;
 import com.recipe.assignment.service.RecipeService;
 
@@ -68,11 +71,13 @@ public class RecipeControllerTest {
 
         doReturn(recipeOptional).when(recipeServiceMock).getRecipeById(anyLong());
 
-        ResponseEntity<Optional<Recipe>> response = recipeControllerMock.getRecipeById(1L);
+        SuccessResponse successResponse = new SuccessResponse();
+        successResponse.setRecipe(recipeOptional);;
+        ResponseEntity<IResponse> response = recipeControllerMock.getRecipeById(1L);
 
         assertThat(response).isNotNull();
         assertEquals(200, response.getStatusCode().value());
-        assertEquals(recipeOptional, response.getBody());
+        assertEquals(successResponse, response.getBody());
     }
 
     @Test
@@ -80,11 +85,13 @@ public class RecipeControllerTest {
         Optional<Recipe> empty = Optional.empty();
         doReturn(empty).when(recipeServiceMock).getRecipeById(anyLong());
 
-        ResponseEntity<Optional<Recipe>> response = recipeControllerMock.getRecipeById(1L);
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setErrorMessage("Given [1] Recipe is not Found");
+        ResponseEntity<IResponse> response = recipeControllerMock.getRecipeById(1L);
 
         assertThat(response).isNotNull();
         assertEquals(404, response.getStatusCode().value());
-        assertEquals(null, response.getBody());
+        assertEquals(errorResponse, response.getBody());
     }
 
     @Test

@@ -1,10 +1,3 @@
-### Tech Requirements
-Java 17
-Maven 2.x
-Swagger 2
-OpenAPI 3
-H2
-
 ### Objective
 Create a standalone java application which allows users to manage their favourite recipes. It should allow adding, updating, removing and fetching recipes. Additionally users should be able to filter available recipes based on one or more of the following criteria:
 1. Whether or not the dish is vegetarian
@@ -25,18 +18,47 @@ All these requirements needs to be satisfied:
 5. Unit tests must be present
 6. Integration tests must be present
 
+### Tech Requirements
+Java 17
+Maven 3.x
+Spring-boot 2.x
+Swagger 2
+OpenAPI v3
+Lombok
+H2 Database
+JUnit and Mockito
+
+### Application Overview
+N-tier architecture approach is applied. Three main layers namely Controller, Service and Repository matches the Web, Business and Data tiers respectively.
+Repository later is an abstracted way to connect different data sources at the same time
+Service layer is used to define business rules and checks
+Controller layer is used to navigate coming requests into api and direct them with related services
 
 ### How to Run the applicaiton
+# Prerequsite:
+- Install Java 17
+- Install Maven 3.7 or higehr 
 
+# Preperation
+- Pull this repository into your local
+
+# Build & Test
 > mvn clean install
 
+# Run
 > mvn sprint-boot:run
 
-## Postman
+### Swagger Page
+browse in local: http://localhost:8080/swagger-ui/index.html#/
 
-## WebBrowser with localhost 
+## Postman
+Download RecipeAPI.postman_collection.json
+Import that json in your Postman
+Ready to use! 
 
 ### How to connect in memory Database
 > localhost:8080/h2
+
+
 
 
