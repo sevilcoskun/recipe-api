@@ -19,19 +19,21 @@ All these requirements needs to be satisfied:
 6. Integration tests must be present
 
 ### Tech Requirements
-Java 17
-Maven 3.x
-Spring-boot 2.x
-Swagger 2
-OpenAPI v3
-Lombok
-H2 Database
-JUnit and Mockito
+- Java 17
+- Maven 3.x
+- Spring-boot 2.x
+- Swagger 2
+- OpenAPI v3
+- Lombok
+- H2 Database
+- JUnit and Mockito
 
 ### Application Overview
-N-tier architecture approach is applied. Three main layers namely Controller, Service and Repository matches the Web, Business and Data tiers respectively.
+N-tier architecture approach is applied. Three main layers namely Controller, Service and Repository matches the Web, Business and Data tiers respectively.<br />
 Repository later is an abstracted way to connect different data sources at the same time
+<br />
 Service layer is used to define business rules and checks
+<br />
 Controller layer is used to navigate coming requests into api and direct them with related services
 
 ### How to Run the applicaiton
@@ -56,7 +58,7 @@ You can check the persistet data via connectiong to H2 database from your browse
 browse in local: http://localhost:8080/swagger-ui/index.html#/
 
 ## Postman
-- Download RecipeAPI_Postman_Collection.json
+- Download `RecipeAPI_Postman_Collection.json`
 - Import that json in your Postman
 - Ready to use! 
 
