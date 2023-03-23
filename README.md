@@ -48,16 +48,19 @@ Controller layer is used to navigate coming requests into api and direct them wi
 # Run
 > mvn sprint-boot:run
 
+### How to connect in memory Database
+You can check the persistet data via connectiong to H2 database from your browser, username and password filled by default
+> localhost:8080/h2
+
 ### Swagger Page
 browse in local: http://localhost:8080/swagger-ui/index.html#/
 
 ## Postman
-Download RecipeAPI.postman_collection.json
-Import that json in your Postman
-Ready to use! 
+- Download RecipeAPI_Postman_Collection.json
+- Import that json in your Postman
+- Ready to use! 
 
-### How to connect in memory Database
-> localhost:8080/h2
+
 
 
 
