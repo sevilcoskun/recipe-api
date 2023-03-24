@@ -35,11 +35,13 @@ Repository later is an abstracted way to connect different data sources at the s
 Service layer is used to define business rules and checks
 <br />
 Controller layer is used to navigate coming requests into api and direct them with related services
+<br />
+Search part is 
 
 ### How to Run the applicaiton
 # Prerequsite:
 - Install Java 17
-- Install Maven 3.7 or higehr 
+- Install Maven 3.7 or higher 
 
 # Preperation
 - Pull this repository into your local

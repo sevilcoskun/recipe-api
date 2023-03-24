@@ -22,7 +22,8 @@ import lombok.Setter;
 @Table(name = "recipes")
 public class Recipe {
 
-    @Id @GeneratedValue Long id;
+    @Id @GeneratedValue 
+    private Long id;
 
     @Column(nullable = false, unique = true, name = "name")
     private String name;
