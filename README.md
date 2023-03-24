@@ -50,7 +50,7 @@ Search part is
 > mvn clean install
 
 ### Run
-> mvn sprint-boot:run
+> mvn spring-boot:run
 
 # How to connect in memory Database
 You can check the persistet data via connectiong to H2 database from your browser, username and password filled by default
