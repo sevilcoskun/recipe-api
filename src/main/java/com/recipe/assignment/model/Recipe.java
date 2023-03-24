@@ -9,6 +9,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,7 +24,7 @@ import lombok.Setter;
 @Table(name = "recipes")
 public class Recipe {
 
-    @Id @GeneratedValue 
+    @Id @GeneratedValue @JsonIgnore
     private Long id;
 
     @Column(nullable = false, unique = true, name = "name")
