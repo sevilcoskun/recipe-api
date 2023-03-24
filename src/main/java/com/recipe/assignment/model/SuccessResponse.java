@@ -11,4 +11,5 @@ import lombok.Setter;
 @Data
 public class SuccessResponse implements IResponse{
     Optional<Recipe> recipe;
+    String message;
 }

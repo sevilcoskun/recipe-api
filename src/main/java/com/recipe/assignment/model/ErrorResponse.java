@@ -8,5 +8,5 @@ import lombok.Setter;
 @Setter
 @Data
 public class ErrorResponse implements IResponse{
-    String errorMessage;    
+    String message;    
 }
