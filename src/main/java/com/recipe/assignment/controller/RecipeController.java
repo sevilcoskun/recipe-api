@@ -70,7 +70,7 @@ public class RecipeController {
         try {
             recipeService.addRecipe(recipe);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body("Recipe cannot be created!" );
+            return ResponseEntity.badRequest().body("Recipe cannot be created!");
         }
         return ResponseEntity.accepted().body("Recipe is created!");
 
@@ -98,7 +98,7 @@ public class RecipeController {
             recipeService.deleteRecipe(id);
         } catch (Exception e) {
             ErrorResponse errorResponse = new ErrorResponse();
-            errorResponse.setMessage("Error - Recipe cannot be deleted!");
+            errorResponse.setMessage("Error - Given Recipe id [" + id + "] is not found to be deleted!");
             return ResponseEntity.badRequest().body(errorResponse);
         }
         SuccessResponse successResponse = new SuccessResponse();

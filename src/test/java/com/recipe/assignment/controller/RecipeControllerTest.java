@@ -187,7 +187,7 @@ public class RecipeControllerTest {
 
         assertThat(response).isNotNull();
         assertEquals(400, response.getStatusCode().value());
-        assertTrue(response.getBody().getMessage().equals("Error - Recipe cannot be deleted!")); 
+        assertTrue(response.getBody().getMessage().equals("Error - Given Recipe id [5] is not found to be deleted!")); 
     }
 
     @Test

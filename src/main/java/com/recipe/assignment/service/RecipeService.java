@@ -32,7 +32,13 @@ public class RecipeService {
 
     public void addRecipe(Recipe recipe) {
         if(recipe.getNumberOfServing() <= 0){
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Number of Servings should be at least 1");
+        }
+        List<Recipe> recipes = (List<Recipe>) repository.findAll();
+        for (Recipe r: recipes) {
+           if(r.getName() == recipe.getName()){
+            throw new IllegalArgumentException("Given recipe 'name' is already exists! Please try another one!");
+           }
         }
         repository.save(recipe);
     }
