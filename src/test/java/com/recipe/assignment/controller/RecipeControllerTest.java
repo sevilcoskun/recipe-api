@@ -1,22 +1,27 @@
 package com.recipe.assignment.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.aspectj.lang.annotation.Before;
+import org.hibernate.annotations.NotFound;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.exceptions.base.MockitoException;
+import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -63,6 +68,17 @@ public class RecipeControllerTest {
     }
 
     @Test
+    public void throw_error_when_get_all_recipes() {
+        doThrow(MockitoException.class).when(recipeServiceMock).getAllRecipes();
+
+        ResponseEntity<List<Recipe>> response = recipeControllerMock.getAllRecipes();
+
+        assertThat(response).isNotNull();
+        assertEquals(500, response.getStatusCode().value());
+        assertEquals(0, response.getBody().size());
+    }
+
+    @Test
     public void get_recipe_by_id_successfully() {
         List<String> ingredients1 = List.of("a", "b", "c");
         Recipe recipe1 = new Recipe(1L, "name1", 4, ingredients1, true, "");
@@ -86,7 +102,7 @@ public class RecipeControllerTest {
         doReturn(empty).when(recipeServiceMock).getRecipeById(anyLong());
 
         ErrorResponse errorResponse = new ErrorResponse();
-        errorResponse.setErrorMessage("Given [1] Recipe is not Found");
+        errorResponse.setMessage("Given [1] Recipe is not Found");
         ResponseEntity<IResponse> response = recipeControllerMock.getRecipeById(1L);
 
         assertThat(response).isNotNull();
@@ -95,31 +111,83 @@ public class RecipeControllerTest {
     }
 
     @Test
+    public void throw_error_when_get_recipe_by_id() {
+        doThrow(MockitoException.class).when(recipeServiceMock).getRecipeById(anyLong());
+        ResponseEntity<IResponse> response = recipeControllerMock.getRecipeById(1L);
+
+        assertThat(response).isNotNull();
+        assertEquals(500, response.getStatusCode().value());
+    }
+
+    @Test
     public void add_recipe_successfully() {
         List<String> ingredients = List.of("pasta", "sauce", "water");
         Recipe recipe = new Recipe((Long) 1L, "pasta", 4, ingredients, true, "nothing");
 
         doNothing().when(recipeServiceMock).addRecipe(any());
-        recipeServiceMock.addRecipe(recipe);
 
         ResponseEntity<String> response = recipeControllerMock.addRecipe(recipe);
 
         assertThat(response).isNotNull();
-        assertEquals(200, response.getStatusCode().value());
+        assertEquals(202, response.getStatusCode().value());
         assertTrue(response.getBody().equals("Recipe is created!"));
+    }
+
+    @Test
+    public void fail_add_recipe() {
+        List<String> ingredients = List.of("pasta", "sauce", "water");
+        Recipe recipe = new Recipe((Long) 1L, "pasta", 0, ingredients, true, "nothing");
+
+        doThrow(IllegalArgumentException.class).when(recipeServiceMock).addRecipe(any());
+
+        ResponseEntity<String> response = recipeControllerMock.addRecipe(recipe);
+
+        assertThat(response).isNotNull();
+        assertEquals(400, response.getStatusCode().value());
+        assertTrue(response.getBody().equals("Recipe cannot be created!"));
     }
 
     @Test
     public void update_recipe_successfully() {
         Recipe updatedRecipe = new Recipe(1L, "name2", 1, new ArrayList<>(), true, "asdasd");
         doNothing().when(recipeServiceMock).updateRecipe(anyLong(), any());
-        recipeControllerMock.updateRecipe(1L, updatedRecipe);
+        ResponseEntity<IResponse> response = recipeControllerMock.updateRecipe(1L, updatedRecipe);
+
+        assertThat(response).isNotNull();
+        assertEquals(202, response.getStatusCode().value());
+        assertTrue(response.getBody().getMessage().equals("Recipe [1] is updated"));
     }
 
     @Test
-    public void delete_recipe_successfully() {
+    public void fail_recipe_update() {
+        Recipe updatedRecipe = new Recipe(1L, "name2", 1, new ArrayList<>(), true, "asdasd");
+        doThrow(IllegalArgumentException.class).when(recipeServiceMock).updateRecipe(anyLong(), any());
+        ResponseEntity<IResponse> response = recipeControllerMock.updateRecipe(1L, updatedRecipe);
+
+        assertThat(response).isNotNull();
+        assertEquals(400, response.getStatusCode().value());
+        assertTrue(response.getBody().getMessage().equals("Error - Recipe cannot be updated!"));
+    }
+
+    @Test
+    public void delete_recipe_successfully() throws NotFoundException {
         doNothing().when(recipeServiceMock).deleteRecipe(anyLong());
-        recipeControllerMock.deleteRecipe(5L);
+        ResponseEntity<IResponse> response  = recipeControllerMock.deleteRecipe(5L);
+
+        assertThat(response).isNotNull();
+        assertEquals(202, response.getStatusCode().value());
+        assertTrue(response.getBody().getMessage().equals("Recipe is deleted!"));
+    }
+
+    @Test
+    public void throw_error_delete_recipe() throws NotFoundException {
+        doThrow(NotFoundException.class).when(recipeServiceMock).deleteRecipe(anyLong());
+
+        ResponseEntity<IResponse> response  = recipeControllerMock.deleteRecipe(5L);
+
+        assertThat(response).isNotNull();
+        assertEquals(400, response.getStatusCode().value());
+        assertTrue(response.getBody().getMessage().equals("Error - Recipe cannot be deleted!")); 
     }
 
     @Test

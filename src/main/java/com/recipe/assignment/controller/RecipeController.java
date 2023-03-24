@@ -1,6 +1,9 @@
 package com.recipe.assignment.controller;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,21 +34,32 @@ public class RecipeController {
     @Operation(summary = "Get all recipes")
     @GetMapping("/recipes")
     public ResponseEntity<List<Recipe>> getAllRecipes() {
-        return ResponseEntity.status(HttpStatus.OK).body(recipeService.getAllRecipes());
+        List<Recipe> recipes = new ArrayList<>();
+        try {
+            recipes = recipeService.getAllRecipes();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(recipes);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(recipes);
     }
 
     @Operation(summary = "Get a recipe by id")
     @GetMapping("/recipes/{id}")
-    public ResponseEntity<IResponse> getRecipeById(@PathVariable Long id){
-       
-        if(recipeService.getRecipeById(id).isPresent()) {
+    public ResponseEntity<IResponse> getRecipeById(@PathVariable Long id) {
+        Optional<Recipe> recipe;
+        ErrorResponse errorResponse = new ErrorResponse();
+        try {
+            recipe = recipeService.getRecipeById(id);
+        } catch (Exception e) {
+            errorResponse.setMessage(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+        if (recipe.isPresent()) {
             SuccessResponse successResponse = new SuccessResponse();
             successResponse.setRecipe(recipeService.getRecipeById(id));
             return ResponseEntity.status(HttpStatus.OK).body(successResponse);
-        }
-        else {
-            ErrorResponse errorResponse = new ErrorResponse();
-            errorResponse.setErrorMessage("Given [" + id + "] Recipe is not Found");
+        } else {
+            errorResponse.setMessage("Given [" + id + "] Recipe is not Found");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
         }
     }
@@ -55,35 +69,51 @@ public class RecipeController {
     public ResponseEntity<String> addRecipe(@RequestBody Recipe recipe) {
         try {
             recipeService.addRecipe(recipe);
-        }catch(Exception e){
-            return ResponseEntity.badRequest().body("Recipe cannot be created!"); 
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("Recipe cannot be created!" );
         }
-        return ResponseEntity.ok().body("Recipe is created!");
-        
+        return ResponseEntity.accepted().body("Recipe is created!");
+
     }
 
     @Operation(summary = "Update a recipe by id")
     @PutMapping("/recipes/{id}")
-    public void updateRecipe(@PathVariable Long id, @RequestBody Recipe recipe) {
-        recipeService.updateRecipe(id, recipe);
+    public ResponseEntity<IResponse> updateRecipe(@PathVariable Long id, @RequestBody Recipe recipe) {
+        try {
+            recipeService.updateRecipe(id, recipe);
+        } catch (IllegalArgumentException e) {
+            ErrorResponse errorResponse = new ErrorResponse();
+            errorResponse.setMessage("Error - Recipe cannot be updated!");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        }
+        SuccessResponse successResponse = new SuccessResponse();
+        successResponse.setMessage("Recipe [" + id + "] is updated");
+        return ResponseEntity.accepted().body(successResponse);
     }
 
     @Operation(summary = "Delete a recipe by id")
     @DeleteMapping("/recipes/{id}")
-    public void deleteRecipe(@PathVariable Long id) {
-        recipeService.deleteRecipe(id);
+    public ResponseEntity<IResponse> deleteRecipe(@PathVariable Long id) {
+        try {
+            recipeService.deleteRecipe(id);
+        } catch (Exception e) {
+            ErrorResponse errorResponse = new ErrorResponse();
+            errorResponse.setMessage("Error - Recipe cannot be deleted!");
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+        SuccessResponse successResponse = new SuccessResponse();
+        successResponse.setMessage("Recipe is deleted!");
+        return ResponseEntity.accepted().body(successResponse);
     }
 
     @Operation(summary = "Search a recipe by given conditions")
-    @PostMapping("/recipes/search")
-    public ResponseEntity<List<Recipe>> searchRecipe(@Validated @RequestBody RequestBodyDto request){
+    @GetMapping("/recipes/search")
+    public ResponseEntity<List<Recipe>> searchRecipe(@Validated @RequestBody RequestBodyDto request) {
         List<Recipe> recipe = recipeService.search(request);
-        if(recipe.size() > 0){
+        if (recipe.size() > 0) {
             return ResponseEntity.status(HttpStatus.OK).body(recipe);
-        }
-        else{
+        } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
-    
 }

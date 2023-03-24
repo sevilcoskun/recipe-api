@@ -13,9 +13,9 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import org.mockito.Mock;
 import com.recipe.assignment.model.Recipe;
-import com.recipe.assignment.model.RequestBodyDto;
 import com.recipe.assignment.repository.RecipeRepository;
 
+import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
   
 @ExtendWith(SpringExtension.class) 
@@ -76,7 +76,7 @@ public class RecipeServiceTest {
     }
 
     @Test
-    public void delete_recipe_successfully() {
+    public void delete_recipe_successfully() throws NotFoundException {
         doNothing().when(recipeServiceMock).deleteRecipe(anyLong());
     }
 
@@ -85,8 +85,6 @@ public class RecipeServiceTest {
         List<String> ingredients = List.of("pasta", "sauce", "water");
         Recipe recipe = new Recipe((Long)1L, "pasta", 4, ingredients, true, "nothing");
         List<Recipe> recipes = List.of(recipe);
-
-        RequestBodyDto request = new RequestBodyDto();
 
         doReturn(recipes).when(recipeServiceMock).search(any());
     }

@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.recipe.assignment.model.Recipe;
@@ -30,6 +31,9 @@ public class RecipeService {
     }
 
     public void addRecipe(Recipe recipe) {
+        if(recipe.getNumberOfServing() <= 0){
+            throw new IllegalArgumentException();
+        }
         repository.save(recipe);
     }
 
@@ -43,33 +47,32 @@ public class RecipeService {
         
     }
 
-    public void deleteRecipe(Long id) {
-        repository.deleteById(id);
+    public void deleteRecipe(Long id) throws NotFoundException {
+        Optional<Recipe> recipe = repository.findById(id);
+        if(recipe.isPresent()){
+            repository.deleteById(id);
+        }
+        else throw new NotFoundException();
     }
 
     public List<Recipe> search(RequestBodyDto request){        
         List<Recipe> recipes = (List<Recipe>) repository.findAll();
         List<Recipe> result = new ArrayList<>();
 
-        if(request.isFilterAllVegeterian()){
-            List<Recipe> allVegeretianRecipesList = recipes.stream().filter(r -> r.isVegaterian()).collect(Collectors.toList());
-            if(result.size() == 0){
+        if(request.filterAllVegeterian != null){
+            if(request.getFilterAllVegeterian() == true){
+                List<Recipe> allVegeretianRecipesList = recipes.stream().filter(r -> r.isVegaterian()).collect(Collectors.toList());
                 result.addAll(allVegeretianRecipesList);
             }
-        }
-
-        if(request.isFilterAllNonVegeterian()){
-            List<Recipe> allNonVegeretianRecipestList = recipes.stream().filter(r -> !r.isVegaterian()).collect(Collectors.toList());
-            if(result.size() == 0) {
+            else{
+                List<Recipe> allNonVegeretianRecipestList = recipes.stream().filter(r -> !r.isVegaterian()).collect(Collectors.toList());
                 result.addAll(allNonVegeretianRecipestList);
-            }
-            else {
-                result.retainAll(allNonVegeretianRecipestList);
             }
         }
 
         if(request.getFilterNumberOfServings() > 0){
             List<Recipe> filteredNumberOfServingsList = recipes.stream().filter(r -> r.getNumberOfServing() == request.getFilterNumberOfServings()).collect(Collectors.toList());
+
             if(result.size() == 0) {
                 result.addAll(filteredNumberOfServingsList);
             }
@@ -81,6 +84,7 @@ public class RecipeService {
         if(request.getIncludedIngredients().size() > 0){
             List<String> ingredients = request.getIncludedIngredients();
             List<Recipe> includedIngredientsList = recipes.stream().filter(r -> r.getIngredients().containsAll(ingredients)).collect(Collectors.toList());
+        
             if(result.size() == 0) {
                 result.addAll(includedIngredientsList);
             }
@@ -109,8 +113,6 @@ public class RecipeService {
                 result.retainAll(filteredInstuctionsList);
             }
         }
-
         return result;
-        
     }
 }
