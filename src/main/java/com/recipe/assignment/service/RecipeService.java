@@ -36,8 +36,8 @@ public class RecipeService {
         }
         List<Recipe> recipes = (List<Recipe>) repository.findAll();
         for (Recipe r: recipes) {
-           if(r.getName() == recipe.getName()){
-            throw new IllegalArgumentException("Given recipe 'name' is already exists! Please try another one!");
+           if(r.getName().equals(recipe.getName())){
+            throw new IllegalArgumentException("Given recipe name is already exists! Please try another one!");
            }
         }
         repository.save(recipe);
@@ -63,62 +63,45 @@ public class RecipeService {
 
     public List<Recipe> search(RequestBodyDto request){        
         List<Recipe> recipes = (List<Recipe>) repository.findAll();
-        List<Recipe> result = new ArrayList<>();
 
         if(request.filterAllVegeterian != null){
             if(request.getFilterAllVegeterian() == true){
                 List<Recipe> allVegeretianRecipesList = recipes.stream().filter(r -> r.isVegaterian()).collect(Collectors.toList());
-                result.addAll(allVegeretianRecipesList);
+                
+                recipes.retainAll(allVegeretianRecipesList);
             }
             else{
                 List<Recipe> allNonVegeretianRecipestList = recipes.stream().filter(r -> !r.isVegaterian()).collect(Collectors.toList());
-                result.addAll(allNonVegeretianRecipestList);
+                
+                recipes.retainAll(allNonVegeretianRecipestList);
             }
         }
 
         if(request.getFilterNumberOfServings() > 0){
             List<Recipe> filteredNumberOfServingsList = recipes.stream().filter(r -> r.getNumberOfServing() == request.getFilterNumberOfServings()).collect(Collectors.toList());
-
-            if(result.size() == 0) {
-                result.addAll(filteredNumberOfServingsList);
-            }
-            else {
-                result.retainAll(filteredNumberOfServingsList);
-            }
+            
+            recipes.retainAll(filteredNumberOfServingsList);
         }
 
         if(request.getIncludedIngredients().size() > 0){
             List<String> ingredients = request.getIncludedIngredients();
             List<Recipe> includedIngredientsList = recipes.stream().filter(r -> r.getIngredients().containsAll(ingredients)).collect(Collectors.toList());
         
-            if(result.size() == 0) {
-                result.addAll(includedIngredientsList);
-            }
-            else {
-                result.retainAll(includedIngredientsList);
-            }
+            recipes.retainAll(includedIngredientsList);
         }
 
         if(request.getExcludedIngredients().size() > 0){
             List<String> ingredients = request.getExcludedIngredients();
             List<Recipe> excludedIngredientsList = recipes.stream().filter(r -> !r.getIngredients().containsAll(ingredients)).collect(Collectors.toList());
-            if(result.size() == 0) {
-                result.addAll(excludedIngredientsList);
-            }
-            else {
-                result.retainAll(excludedIngredientsList);
-            }
+            
+            recipes.retainAll(excludedIngredientsList);
         }
 
         if(request.getFilterInstruction().length() > 0){
             List<Recipe> filteredInstuctionsList = recipes.stream().filter(r -> r.getInstructions().contains(request.getFilterInstruction())).collect(Collectors.toList());
-            if(result.size() == 0) {
-                result.addAll(filteredInstuctionsList);
-            }
-            else {
-                result.retainAll(filteredInstuctionsList);
-            }
+            
+            recipes.retainAll(filteredInstuctionsList);
         }
-        return result;
+        return recipes;
     }
 }

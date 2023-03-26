@@ -8,14 +8,11 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.aspectj.lang.annotation.Before;
-import org.hibernate.annotations.NotFound;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -144,7 +141,7 @@ public class RecipeControllerTest {
 
         assertThat(response).isNotNull();
         assertEquals(400, response.getStatusCode().value());
-        assertTrue(response.getBody().equals("Recipe cannot be created!"));
+        assertTrue(response.getBody().equals("Given recipe name is already exists! Please try another one!"));
     }
 
     @Test

@@ -9,8 +9,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
+import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,10 +21,12 @@ import lombok.Setter;
 @Entity
 @Builder
 @NoArgsConstructor
+@ApiModel
 @Table(name = "recipes")
 public class Recipe {
 
-    @Id @GeneratedValue @JsonIgnore
+    @Id @GeneratedValue
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private Long id;
 
     @Column(nullable = false, unique = true, name = "name")

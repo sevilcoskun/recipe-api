@@ -70,7 +70,7 @@ public class RecipeController {
         try {
             recipeService.addRecipe(recipe);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body("Recipe cannot be created!");
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
         return ResponseEntity.accepted().body("Recipe is created!");
 
