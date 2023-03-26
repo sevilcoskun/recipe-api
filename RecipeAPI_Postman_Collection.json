@@ -31,7 +31,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n        \"name\": \"pasta al pesto\",\n        \"numberOfServing\": 4,\n        \"ingredients\": [\n            \"1 packet pasta\",\n            \"pesto sauce\",\n            \"water\",\n            \"parmagiano\"\n        ],\n        \"instructions\": \"boil water and add 1 packet of pasta,cook 10-12 minutes and drain after that. Lastly add  pesto sauce with pasta\",\n        \"vegaterian\": true\n}",
+					"raw": "{\n        \"name\": \"dish\",\n        \"numberOfServing\": 1,\n        \"ingredients\": [\n            \"string\"\n        ],\n        \"instructions\": \"string\",\n        \"vegaterian\": false\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -57,14 +57,14 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "localhost:8080/recipes/3",
+					"raw": "localhost:8080/recipes/1",
 					"host": [
 						"localhost"
 					],
 					"port": "8080",
 					"path": [
 						"recipes",
-						"3"
+						"1"
 					]
 				}
 			},
@@ -77,7 +77,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": " {\n        \"name\": \"pasta al pesto\",\n        \"numberOfServing\": 4,\n        \"ingredients\": [\n            \"1 packet pasta\",\n            \"pesto sauce\",\n            \"water\",\n            \"parmagiano\"\n        ],\n        \"instructions\": \"boil water and add 1 packet of pasta,cook 10-12 minutes and drain after that. Lastly add  pesto sauce with pasta\",\n        \"vegaterian\": true\n    }",
+					"raw": " {\n        \"name\": \"dish\",\n        \"numberOfServing\": 4,\n        \"ingredients\": [\n            \"string\"\n        ],\n        \"instructions\": \"string\",\n        \"vegaterian\": true\n    }",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -85,14 +85,14 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:8080/recipes/5",
+					"raw": "localhost:8080/recipes/1",
 					"host": [
 						"localhost"
 					],
 					"port": "8080",
 					"path": [
 						"recipes",
-						"5"
+						"1"
 					]
 				}
 			},
@@ -100,12 +100,15 @@
 		},
 		{
 			"name": "Search Recipes",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
 			"request": {
-				"method": "POST",
+				"method": "GET",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"filterAllNonVegeterian\": true,\n    \"filterNumberOfServings\": 2,\n    \"excludedIngredients\": [\"salt\"]\n}",
+					"raw": "{\n  \"filterAllVegeterian\": true,\n  \"filterNumberOfServings\": 0,\n  \"includedIngredients\": [\n    \"string\"\n  ],\n  \"excludedIngredients\": [\n    \"string\"\n  ],\n  \"filterInstruction\": \"string\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
